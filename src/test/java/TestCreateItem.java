@@ -40,5 +40,15 @@ public class TestCreateItem {
         assertStatusCode(response, 200);
     }
 
+    @Test
+    public void testAnotherCreateBooking() {
+        //Using spec() with REST-Assured to apply a predefined request specification to a REST API request.
+        given()
+                .spec(requestSpecification)
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+    }
 
 }
