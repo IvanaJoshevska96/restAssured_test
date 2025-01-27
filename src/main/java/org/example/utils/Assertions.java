@@ -5,7 +5,6 @@ import io.restassured.response.Response;
 
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -56,7 +55,7 @@ public class Assertions {
         } catch (Exception e) {
             System.out.println("Error parsing the response body: " + e.getMessage());
         }
-
     }
+
 }
 

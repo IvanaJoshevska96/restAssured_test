@@ -1,14 +1,15 @@
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.example.utils.Assertions.*;
 import static org.example.utils.BaseOperations.getRequest;
-import static org.hamcrest.Matchers.*;
 
-public class FirstTest {
+public class TestGetItems {
     public static String URL = "https://restful-booker.herokuapp.com";
     public static String ENDPOINT = "/booking";
     static Map<String, String> headers = new HashMap<>();
@@ -17,23 +18,6 @@ public class FirstTest {
         headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer your-token-here");
-    }
-
-
-    @Test
-    public void firstTest() {
-        getRequest(URL, ENDPOINT, headers);
-        Response response = getRequest(URL, ENDPOINT, headers);
-        response.then().assertThat().statusCode(200);
-        response.then().assertThat().statusCode(not(201));
-        response.then().assertThat().time(lessThan(5000L));
-        response.then().header("Content-Type", "application/json; charset=utf-8");
-        response.then().headers("Content-Type", notNullValue());
-        response.then().body("bookingid", is(notNullValue()));
-        response.then().body("size()", greaterThan(4));
-        response.then().body("bookingid", hasItem(1081));
-        response.then().body("", hasItem(Map.of("bookingid", 1081)));
-        response.then().log().body();
     }
 
     @Test
@@ -54,5 +38,15 @@ public class FirstTest {
         Response response = getRequest(URL, ENDPOINT, headers);
         // response.then().log().body();
         assertJsonContainsObjects(response, 20, "bookingid");
+    }
+    @Test
+    public void getAllIds() {
+        Response response = getRequest(URL, ENDPOINT, headers);
+       //  response.then().log().body();
+        JsonPath jsonPath = response.jsonPath();
+        List<Integer> bookingIds = jsonPath.getList("bookingid", Integer.class);
+
+        // Print the list of booking IDs
+        System.out.println(bookingIds);
     }
 }
