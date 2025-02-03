@@ -1,7 +1,7 @@
-import groovy.json.JsonOutput;
+package authorization;
+
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.example.utils.BaseOperations;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,36 +13,46 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 import static org.example.utils.Assertions.assertStatusCode;
 
-public class TestPutItem {
-
+public class TestsBearerTokenAuth {
     public static String URL = "https://restful-booker.herokuapp.com";
-    static int num = BaseOperations.getAllItemsIds();
-    public static String ENDPOINT = "/booking/"+num;
+    public static String ENDPOINT = "/booking";
+    public static String PATH = "src/test/resources/ItemCreate.json";
     static Map<String, String> headers = new HashMap<>();
-    public static String PATH = "src/test/resources/ItemUpdate.json";
 
     static {
         headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer your-token-here");
+        //Bearer Token for auth
+        headers.put("Authorization", "Bearer token");
     }
 
     String jsonBody = new String(Files.readAllBytes(Paths.get(PATH)));
-
     RequestSpecification requestSpecification = given()
             .baseUri(URL)
             .basePath(ENDPOINT)
             .headers(headers)
-            .auth().preemptive().basic("admin", "password123")
-            .body(jsonBody);
+            .body(jsonBody)
+            .log().ifValidationFails();
+
+    public TestsBearerTokenAuth() throws IOException {
+    }
 
 
-    public TestPutItem() throws IOException {
+    @Test
+    public void testCreateBooking() {
+        Response response = requestSpecification.when().post();
+        assertStatusCode(response, 200);
     }
 
     @Test
-    public void testUpdateItem() throws IOException {
-        Response response = requestSpecification.when().put();
-        assertStatusCode(response, 200);
+    public void testAnotherCreateBooking() {
+        //Using spec() with REST-Assured to apply a predefined request specification to a REST API request.
+        given()
+                .spec(requestSpecification)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .log().ifValidationFails();
     }
 }

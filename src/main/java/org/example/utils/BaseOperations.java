@@ -57,8 +57,6 @@ public class BaseOperations {
 
         JsonPath jsonPath = response.jsonPath();
         List<Integer> bookingIds = jsonPath.getList("bookingid", Integer.class);
-
-
         return bookingIds.isEmpty() ? -1 : bookingIds.get(0);
     }
 }
